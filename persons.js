@@ -25,6 +25,10 @@ let persons = [
     }
 
   ]
+
+const cors = require('cors')
+app.use(cors())
+app.use(express.static('dist'))
 app.use(morgan('tiny'));
 app.use(express.json())
 
@@ -42,13 +46,13 @@ app.get('/info', (request, response) => {
   response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${Date()}</p>`)
 })
 
-app.get('/api/persons', (request, response) => {
+app.get('/persons', (request, response) => {
     morgan('tiny')
     response.json(persons)
 
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   const person = persons.find(person => person.id === id)
   if (person) {
@@ -59,7 +63,7 @@ app.get('/api/persons/:id', (request, response) => {
   }
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   persons = persons.filter(person => person.id !== id)
 
@@ -73,7 +77,7 @@ const generateId = () => {
   return maxId + 1
 }
 
-app.post('/api/persons', (request, response) => {
+app.post('/persons', (request, response) => {
   const body = request.body
   if (!body.name || !body.number) {
     return response.status(400).json({ 
@@ -97,7 +101,7 @@ app.post('/api/persons', (request, response) => {
   response.json(person)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
